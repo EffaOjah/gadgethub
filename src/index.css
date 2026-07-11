@@ -1,0 +1,62 @@
+@font-face {
+  font-family: 'NairaFont';
+  src: local('Arial'), local('Helvetica'), local('Segoe UI'), local('Roboto');
+  unicode-range: U+20A6;
+}
+
+:root {
+  color: #0f172a;
+  background: #ffffff;
+  font-family: 'NairaFont', 'Outfit', Arial, sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+.coming-soon {
+  display: flex;
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 32px;
+  text-align: center;
+}
+
+.coming-soon__logo {
+  width: auto;
+  height: 96px;
+  margin-bottom: 32px;
+}
+
+.coming-soon h1 {
+  margin: 0;
+  color: #0f172a;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+@media (max-width: 480px) {
+  .coming-soon__logo {
+    height: 80px;
+  }
+}
