@@ -27,3 +27,4 @@ dist-ssr
 # UI design reference mockups (not used as app assets)
 public/img/[0-9].jpeg
 public/img/10.jpeg
+.vercel

@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   Sparkles, MessageCircle, ShieldCheck, Award, ThumbsUp,
@@ -6,8 +7,9 @@ import {
 } from 'lucide-react';
 import LiveTicker from '../components/layout/LiveTicker';
 import { Avatar, DeviceArt, IconTile } from '../components/ui';
-import { discussions, contributors, communityCategories } from '../data/community';
-import { communityTicker } from '../data/stats';
+import { contributors, communityCategories } from '../data/community';
+import { getDiscussionsPage } from '../services';
+import type { Discussion } from '../types';
 
 const POPULAR_QUESTIONS = [
   'Best phone for video editing under ₦900k?', 'Is UK used iPhone safe?', 'MacBook Air M3 or Dell XPS 13?',
@@ -52,6 +54,31 @@ const SAFETY = [
 
 export default function CommunityPage() {
   const navigate = useNavigate();
+
+  // Paged discussions — GET /api/community/discussions?page=&pageSize=
+  const [discussions, setDiscussions] = useState<Discussion[]>([]);
+  const [discussionsPage, setDiscussionsPage] = useState(1);
+  const [hasMoreDiscussions, setHasMoreDiscussions] = useState(false);
+  const [loadingDiscussions, setLoadingDiscussions] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    getDiscussionsPage(1).then((p) => {
+      if (!active) return;
+      setDiscussions(p.items);
+      setHasMoreDiscussions(p.hasMore);
+    });
+    return () => { active = false; };
+  }, []);
+
+  const loadMoreDiscussions = async () => {
+    setLoadingDiscussions(true);
+    const p = await getDiscussionsPage(discussionsPage + 1);
+    setDiscussions((prev) => [...prev, ...p.items]);
+    setDiscussionsPage(p.page);
+    setHasMoreDiscussions(p.hasMore);
+    setLoadingDiscussions(false);
+  };
 
   return (
     <>
@@ -142,7 +169,7 @@ export default function CommunityPage() {
 
       <LiveTicker
         label="Live Community Activity"
-        items={communityTicker}
+        feed="community"
         countText={{ value: '42', text: 'users discussing now' }}
       />
 
@@ -211,6 +238,15 @@ export default function CommunityPage() {
                 </div>
               </div>
             ))}
+            <div className="center mt-16">
+              {hasMoreDiscussions ? (
+                <button className="btn btn--outline" onClick={loadMoreDiscussions} disabled={loadingDiscussions}>
+                  {loadingDiscussions ? 'Loading…' : 'Load More Discussions'}
+                </button>
+              ) : (
+                discussions.length > 0 && <span className="tiny muted-2">All discussions loaded</span>
+              )}
+            </div>
           </div>
 
           {/* Insights sidebar */}

@@ -12,7 +12,6 @@ import { sellers } from '../data/sellers';
 import { discussions } from '../data/community';
 import { guides } from '../data/guides';
 import { newsArticles } from '../data/news';
-import { searchTicker } from '../data/stats';
 import { formatNaira, formatRange } from '../lib/api';
 
 const RESULT_TABS = ['All Results', 'Products', 'Sellers', 'Reviews', 'Comparisons', 'Community', 'Knowledge Hub', 'News'];
@@ -173,7 +172,7 @@ export default function SearchResultsPage() {
 
       <LiveTicker
         label="Live Search Activity"
-        items={searchTicker}
+        feed="search"
         countText={{ value: '42', text: 'users searching gadgets now' }}
       />
 

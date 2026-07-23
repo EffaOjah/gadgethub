@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   Search, Sparkles, Newspaper, TrendingUp, AlertTriangle, Bot, Store,
@@ -8,8 +8,9 @@ import LiveTicker from '../components/layout/LiveTicker';
 import { DeviceArt, Robot, IconTile } from '../components/ui';
 import { newsArticles, scamAlerts } from '../data/news';
 import { products } from '../data/products';
-import { newsTicker } from '../data/stats';
 import { formatNaira, formatRange } from '../lib/api';
+import { getNewsFeedPage } from '../services';
+import type { NewsArticle } from '../types';
 
 const POPULAR = [
   'iPhone 16 Pro Max price in Nigeria', 'Samsung S24 Ultra update', 'MacBook Air M3 price watch',
@@ -41,8 +42,32 @@ export default function NewsPage() {
   const [activeTab, setActiveTab] = useState('All News');
   const featured = newsArticles[0];
   const subFeatures = newsArticles.slice(1, 4);
-  const feed = newsArticles.slice(4);
   const priceWatch = PRICE_WATCH_IDS.map((id) => products.find((p) => p.id === id)!);
+
+  // Paged news feed — GET /api/news/feed?page=&pageSize= via the services layer
+  const [feed, setFeed] = useState<NewsArticle[]>([]);
+  const [feedPage, setFeedPage] = useState(1);
+  const [hasMoreNews, setHasMoreNews] = useState(false);
+  const [loadingNews, setLoadingNews] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    getNewsFeedPage(1).then((p) => {
+      if (!active) return;
+      setFeed(p.items);
+      setHasMoreNews(p.hasMore);
+    });
+    return () => { active = false; };
+  }, []);
+
+  const loadMoreNews = async () => {
+    setLoadingNews(true);
+    const p = await getNewsFeedPage(feedPage + 1);
+    setFeed((prev) => [...prev, ...p.items]);
+    setFeedPage(p.page);
+    setHasMoreNews(p.hasMore);
+    setLoadingNews(false);
+  };
 
   const visibleFeed =
     activeTab === 'All News'
@@ -153,7 +178,7 @@ export default function NewsPage() {
 
       <LiveTicker
         label="Live Gadget News Activity"
-        items={newsTicker}
+        feed="news"
         countText={{ value: '42', text: 'users reading gadget news now' }}
       />
 
@@ -233,7 +258,13 @@ export default function NewsPage() {
               ))}
             </div>
             <div className="center mt-16">
-              <button className="btn btn--primary">Load More News</button>
+              {hasMoreNews ? (
+                <button className="btn btn--primary" onClick={loadMoreNews} disabled={loadingNews}>
+                  {loadingNews ? 'Loading…' : 'Load More News'}
+                </button>
+              ) : (
+                feed.length > 0 && <span className="tiny muted-2">All news loaded</span>
+              )}
             </div>
           </div>
 

@@ -32,26 +32,64 @@ UI pages  ──►  src/services/index.ts  ──►  src/data/* (mock, today)
 
 ## Expected endpoints
 
-| Service function        | Endpoint                              | Returns                |
-| ----------------------- | ------------------------------------- | ---------------------- |
-| `getProducts`           | `GET /api/products`                   | `Product[]`            |
-| `getTrendingProducts`   | `GET /api/products?sort=trending`     | `Product[]`            |
-| `getLaptops`            | `GET /api/products?category=laptops`  | `Product[]`            |
-| `getProduct`            | `GET /api/products/:slug`             | `Product`              |
-| `searchProducts`        | `GET /api/search?q=`                  | `Product[]`            |
-| `getSellers`            | `GET /api/sellers`                    | `Seller[]`             |
-| `getReviews`            | `GET /api/reviews`                    | `Review[]`             |
-| `getFeaturedReview`     | `GET /api/reviews/featured`           | featured review        |
-| `getDiscussions`        | `GET /api/community/discussions`      | `Discussion[]`         |
-| `getContributors`       | `GET /api/community/contributors`     | `Contributor[]`        |
-| `getNews`               | `GET /api/news`                       | `NewsArticle[]`        |
-| `getScamAlerts`         | `GET /api/news/scam-alerts`           | `ScamAlert[]`          |
-| `getGuides`             | `GET /api/guides`                     | `Guide[]`              |
-| `getGuide`              | `GET /api/guides/:slug`               | `Guide`                |
-| `getGlossary`           | `GET /api/glossary`                   | `GlossaryTerm[]`       |
-| `getPlatformStats`      | `GET /api/stats`                      | `PlatformStats`        |
-| `askAi`                 | `POST /api/ai/ask { question }`       | `{ answer: string }`   |
-| `subscribeNewsletter`   | `POST /api/newsletter/subscribe`      | `{ ok: boolean }`      |
+| Service function        | Endpoint                                        | Returns                |
+| ----------------------- | ----------------------------------------------- | ---------------------- |
+| `getProducts`           | `GET /api/products`                             | `Product[]`            |
+| `getTrendingProducts`   | `GET /api/products?sort=trending`               | `Product[]`            |
+| `getLaptops`            | `GET /api/products?category=laptops`            | `Product[]`            |
+| `getProduct`            | `GET /api/products/:slug`                       | `Product`              |
+| `searchProducts`        | `GET /api/search?q=`                            | `Product[]`            |
+| `getSellers`            | `GET /api/sellers`                              | `Seller[]`             |
+| `getReviews`            | `GET /api/reviews`                              | `Review[]`             |
+| `getReviewsPage`        | `GET /api/reviews?page=&pageSize=`              | `Paged<Review>`        |
+| `getFeaturedReview`     | `GET /api/reviews/featured`                     | featured review        |
+| `getDiscussions`        | `GET /api/community/discussions`                | `Discussion[]`         |
+| `getDiscussionsPage`    | `GET /api/community/discussions?page=&pageSize=`| `Paged<Discussion>`    |
+| `getContributors`       | `GET /api/community/contributors`               | `Contributor[]`        |
+| `getNews`               | `GET /api/news`                                 | `NewsArticle[]`        |
+| `getNewsFeedPage`       | `GET /api/news/feed?page=&pageSize=`            | `Paged<NewsArticle>`   |
+| `getScamAlerts`         | `GET /api/news/scam-alerts`                     | `ScamAlert[]`          |
+| `getTickerFeed`         | `GET /api/activity/:feed`                       | `TickerItem[]`         |
+| `getGuides`             | `GET /api/guides`                               | `Guide[]`              |
+| `getGuide`              | `GET /api/guides/:slug`                         | `Guide`                |
+| `getGlossary`           | `GET /api/glossary`                             | `GlossaryTerm[]`       |
+| `getPlatformStats`      | `GET /api/stats`                                | `PlatformStats`        |
+| `askAi`                 | `POST /api/ai/ask { question }`                 | `{ answer: string }`   |
+| `askAiStream`           | `POST /api/ai/ask { question }` (streamed)      | chunked text / SSE     |
+| `subscribeNewsletter`   | `POST /api/newsletter/subscribe`                | `{ ok: boolean }`      |
+
+## Pagination contract
+
+Paged endpoints return `Paged<T>` (see `src/types/index.ts`):
+
+```json
+{ "items": [...], "page": 1, "pageSize": 4, "total": 12, "hasMore": true }
+```
+
+The "Load More" buttons on Reviews, News, and Community are already wired to
+this contract — implement the query params and the UI needs no changes.
+
+## Streaming AI answers
+
+The AI Advisor chat renders answers progressively through `askAiStream(question,
+onUpdate)`. Today it simulates streaming from mock data; the exact fetch-reader
+swap is written in its doc comment in `src/services/index.ts`. Any of these
+backend styles works:
+
+- **Chunked text** (simplest): `POST /api/ai/ask` responding with
+  `Transfer-Encoding: chunked` plain text.
+- **SSE**: `Content-Type: text/event-stream` with token deltas.
+
+Keep `askAi` as the non-streaming fallback for the same endpoint.
+
+## Live activity tickers
+
+Every page's ticker fetches `getTickerFeed('<feed>')` where feed is one of
+`home | search | laptops | news | learning | community | reviews`
+(`GET /api/activity/:feed` → `TickerItem[]`). The frontend cycles the items
+automatically — the backend just returns the latest ~5–10 activity events per
+feed. Polling or a realtime channel can be added inside `getTickerFeed` later
+without touching any page.
 
 ## Auth (to implement)
 
@@ -68,8 +106,3 @@ UI pages  ──►  src/services/index.ts  ──►  src/data/* (mock, today)
 All amounts are integers in **Naira**. The UI formats them (`₦1.4M`, `₦950k`) via
 `formatNaira` / `formatRange` in `src/lib/api.ts` — return raw numbers, not strings.
 
-## Nice-to-haves the UI is ready for
-
-- Live ticker feeds (`TickerItem[]`) per page — currently static mock.
-- Streaming AI answers (swap `askAi` for an SSE/fetch-stream implementation).
-- Pagination on reviews/news/discussions ("Load More" buttons are wired as no-ops).

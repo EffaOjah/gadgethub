@@ -168,6 +168,25 @@ export interface GlossaryTerm {
   definition: string;
 }
 
+/** Standard paged response — see API_INTEGRATION.md */
+export interface Paged<T> {
+  items: T[];
+  page: number;
+  pageSize: number;
+  total: number;
+  hasMore: boolean;
+}
+
+/** Named live-activity feeds, one per page ticker */
+export type TickerFeed =
+  | 'home'
+  | 'search'
+  | 'laptops'
+  | 'news'
+  | 'learning'
+  | 'community'
+  | 'reviews';
+
 /** Auth (backend to implement — see API_INTEGRATION.md) */
 export interface User {
   id: string;

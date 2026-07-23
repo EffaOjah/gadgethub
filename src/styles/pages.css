@@ -606,3 +606,13 @@
 /* App-store badges stay black (official style) — force light text */
 :root[data-theme='light'] .store-badge { background: #0b1226; border-color: #0b1226; color: #fff; }
 :root[data-theme='light'] .store-badge small { color: rgba(255, 255, 255, 0.65); }
+
+/* ── Live ticker rotation (theme-neutral) ───────────────────── */
+.ticker__items--animate { animation: ticker-in 0.45s ease; }
+@keyframes ticker-in {
+  from { opacity: 0.25; transform: translateX(16px); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ticker__items--animate { animation: none; }
+}

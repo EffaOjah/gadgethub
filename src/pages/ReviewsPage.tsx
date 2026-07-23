@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   Search, Sparkles, BadgeCheck, Camera, AlertTriangle, ThumbsUp, MessageCircle,
@@ -7,10 +8,10 @@ import {
 import LiveTicker from '../components/layout/LiveTicker';
 import PageCta from '../components/layout/PageCta';
 import { Avatar, DeviceArt, Robot, Stars, IconTile } from '../components/ui';
-import { reviews } from '../data/reviews';
 import { products, productBySlug } from '../data/products';
 import { sellers } from '../data/sellers';
-import { reviewsTicker } from '../data/stats';
+import { getReviewsPage } from '../services';
+import type { Review } from '../types';
 
 const QUICK_SEARCHES = [
   'MacBook Air M3 reviews', 'iPhone 16 Pro Max reviews', 'Samsung S24 Ultra camera',
@@ -57,6 +58,31 @@ const FAQS = [
 export default function ReviewsPage() {
   const navigate = useNavigate();
   const macbook = productBySlug('macbook-air-m3')!;
+
+  // Paged reviews — GET /api/reviews?page=&pageSize= via the services layer
+  const [loadedReviews, setLoadedReviews] = useState<Review[]>([]);
+  const [reviewsPage, setReviewsPage] = useState(1);
+  const [hasMoreReviews, setHasMoreReviews] = useState(false);
+  const [loadingReviews, setLoadingReviews] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    getReviewsPage(1).then((p) => {
+      if (!active) return;
+      setLoadedReviews(p.items);
+      setHasMoreReviews(p.hasMore);
+    });
+    return () => { active = false; };
+  }, []);
+
+  const loadMoreReviews = async () => {
+    setLoadingReviews(true);
+    const p = await getReviewsPage(reviewsPage + 1);
+    setLoadedReviews((prev) => [...prev, ...p.items]);
+    setReviewsPage(p.page);
+    setHasMoreReviews(p.hasMore);
+    setLoadingReviews(false);
+  };
 
   return (
     <>
@@ -177,7 +203,7 @@ export default function ReviewsPage() {
 
       <LiveTicker
         label="Live Review Activity"
-        items={reviewsTicker}
+        feed="reviews"
         countText={{ value: '42', text: 'users reading reviews now' }}
       />
 
@@ -232,7 +258,7 @@ export default function ReviewsPage() {
                 <p className="sub">Real buyers. Real experiences. Verified feedback from gadget owners.</p>
               </div>
             </div>
-            {reviews.slice(0, 4).map((r) => {
+            {loadedReviews.map((r) => {
               const p = products.find((x) => x.id === r.productId)!;
               return (
                 <div className="discussion-row" key={r.id}>
@@ -286,7 +312,13 @@ export default function ReviewsPage() {
               );
             })}
             <div className="center mt-16">
-              <button className="btn btn--outline">Load More Reviews</button>
+              {hasMoreReviews ? (
+                <button className="btn btn--outline" onClick={loadMoreReviews} disabled={loadingReviews}>
+                  {loadingReviews ? 'Loading…' : 'Load More Reviews'}
+                </button>
+              ) : (
+                loadedReviews.length > 0 && <span className="tiny muted-2">All reviews loaded</span>
+              )}
             </div>
           </div>
 

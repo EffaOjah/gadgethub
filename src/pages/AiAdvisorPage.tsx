@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Send, BadgeCheck, ShieldCheck, Star, Mic } from 'lucide-react';
 import { Robot, IconTile } from '../components/ui';
-import { askAi } from '../services';
+import { askAiStream } from '../services';
 
 interface ChatMessage {
   id: number;
@@ -32,9 +32,14 @@ export default function AiAdvisorPage() {
     setMessages((m) => [...m, { id: nextId.current++, role: 'user', text: question }]);
     setInput('');
     setThinking(true);
+    // Streamed answer: an empty AI bubble appears immediately (typing dots),
+    // then fills progressively as chunks arrive from askAiStream.
+    const aiId = nextId.current++;
+    setMessages((m) => [...m, { id: aiId, role: 'ai', text: '' }]);
     try {
-      const answer = await askAi(question);
-      setMessages((m) => [...m, { id: nextId.current++, role: 'ai', text: answer }]);
+      await askAiStream(question, (textSoFar) => {
+        setMessages((m) => m.map((msg) => (msg.id === aiId ? { ...msg, text: textSoFar } : msg)));
+      });
     } finally {
       setThinking(false);
     }
@@ -76,17 +81,15 @@ export default function AiAdvisorPage() {
               {messages.map((m) => (
                 <div key={m.id} className={`chat-msg${m.role === 'user' ? ' chat-msg--user' : ''}`}>
                   {m.role === 'ai' && <Robot size={34} />}
-                  <div className="chat-bubble">{m.text}</div>
-                </div>
-              ))}
-              {thinking && (
-                <div className="chat-msg">
-                  <Robot size={34} />
                   <div className="chat-bubble">
-                    <span className="typing-dots"><i /><i /><i /></span>
+                    {m.role === 'ai' && m.text === '' ? (
+                      <span className="typing-dots"><i /><i /><i /></span>
+                    ) : (
+                      m.text
+                    )}
                   </div>
                 </div>
-              )}
+              ))}
             </div>
             <form
               className="flex gap-10"

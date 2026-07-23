@@ -14,7 +14,7 @@ import { sellers } from '../data/sellers';
 import { featuredReview } from '../data/reviews';
 import { discussions } from '../data/community';
 import { guides } from '../data/guides';
-import { platformStats, homeTicker } from '../data/stats';
+import { platformStats } from '../data/stats';
 import { subscribeNewsletter } from '../services';
 import { formatNumber } from '../lib/format';
 
@@ -193,7 +193,7 @@ export default function HomePage() {
       {/* ── LIVE TICKER ──────────────────────────────────────── */}
       <LiveTicker
         label="Live Now"
-        items={homeTicker.slice(0, 4)}
+        feed="home"
         countText={{ value: '42', text: 'users online asking questions right now' }}
       />
 

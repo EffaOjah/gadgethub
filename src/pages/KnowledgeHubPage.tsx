@@ -8,7 +8,6 @@ import {
 import LiveTicker from '../components/layout/LiveTicker';
 import { DeviceArt, Robot, IconTile } from '../components/ui';
 import { guides, latestFromHub, hubCategories } from '../data/guides';
-import { learningTicker } from '../data/stats';
 
 const POPULAR_TOPICS = [
   'How much RAM do I need?', 'How to spot fake AirPods', 'Best laptop for students',
@@ -171,7 +170,7 @@ export default function KnowledgeHubPage() {
 
       <LiveTicker
         label="Live Learning Activity"
-        items={learningTicker}
+        feed="learning"
         countText={{ value: '42', text: 'users learning before buying now' }}
       />
 

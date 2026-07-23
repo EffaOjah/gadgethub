@@ -11,7 +11,6 @@ import { Avatar, ConfBadge, DeviceArt, Robot, Stars, IconTile } from '../compone
 import { laptops, products } from '../data/products';
 import { sellers } from '../data/sellers';
 import { guides } from '../data/guides';
-import { laptopTicker } from '../data/stats';
 import { formatRange } from '../lib/api';
 
 const FILTERS = [
@@ -175,7 +174,7 @@ export default function CategoryPage() {
 
       <LiveTicker
         label="Live Laptop Activity"
-        items={laptopTicker}
+        feed="laptops"
         countText={{ value: '42', text: 'users browsing laptops now' }}
       />
 
