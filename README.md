@@ -1,73 +1,69 @@
-# React + TypeScript + Vite
+# GadgetHub Nigeria — Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> **Stop Guessing. Start Buying Right.** — AI-powered gadget comparison, verified owner
+> reviews, and a trusted seller network built for Nigerian buyers.
 
-Currently, two official plugins are available:
+React 19 + TypeScript + Vite SPA implementing the full GadgetHub UI design system
+(dark navy / electric blue / honest green, Outfit typeface).
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Quick start
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev       # http://localhost:5173
+npm run build     # type-check + production build
+npm run preview   # serve the production build
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Pages
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+**From the UI designs**
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+| Route | Page |
+| --- | --- |
+| `/` | Home — hero, AI recommendation, trending gadgets, decision engine |
+| `/search?q=` | Gadget Search Intelligence |
+| `/category/:slug` | Category Intelligence (e.g. Best Laptops in Nigeria) |
+| `/knowledge-hub` | Knowledge Hub — Learn Before You Buy |
+| `/knowledge-hub/guides/:slug` | Guide article (e.g. How to Choose the Right Laptop) |
+| `/news` | Gadget News Intelligence |
+| `/community` | Gadget Community |
+| `/reviews` | Verified Owner Reviews |
+
+**Platform pages** — `/ai-advisor` (AI chat), `/compare`, `/sellers`, `/product/:slug`, `/signin`
+
+**Resources / company / legal** — `/how-it-works`, `/glossary`, `/help`, `/about`,
+`/mission`, `/careers`, `/contact`, `/press`, `/privacy`, `/terms`, `/cookies`,
+`/refunds`, `/sitemap`
+
+## Project structure
+
 ```
+src/
+├── components/
+│   ├── layout/        # Navbar, Footer, LiveTicker, PageCta, Layout
+│   ├── ui.tsx         # Logo, Stars, ConfidenceRing, Avatar, DeviceArt, Robot…
+│   └── ProductCard.tsx
+├── pages/             # One file per page (+ InfoPages.tsx for static pages)
+├── data/              # Mock data matching the designs (products, sellers, …)
+├── services/          # ⭐ Backend integration point — see API_INTEGRATION.md
+├── lib/               # api client, formatters
+├── types/             # Shared domain types (frontend/backend contract)
+├── styles/pages.css   # Nav + page-specific styles
+└── index.css          # Design tokens + component classes
+```
+
+## Backend integration
+
+The backend is developed separately. The frontend runs entirely on mock data until
+it's ready — then integration is a function-by-function swap inside
+`src/services/index.ts`. **Read [API_INTEGRATION.md](API_INTEGRATION.md).**
+
+```bash
+cp .env.example .env   # set VITE_API_URL and VITE_GOOGLE_CLIENT_ID
+```
+
+## Deployment
+
+`vercel.json` contains the SPA rewrite (all routes → `index.html`). Deploy with
+`vercel` or any static host serving `dist/`.
