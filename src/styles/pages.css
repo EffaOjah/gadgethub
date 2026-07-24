@@ -63,8 +63,15 @@
   flex-direction: column;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
 }
-.nav__dropdown:hover .nav__menu,
-.nav__dropdown:focus-within .nav__menu { display: flex; }
+/* Desktop (hover-capable pointer): reveal submenu on hover/focus */
+@media (hover: hover) {
+  .nav__dropdown:hover .nav__menu,
+  .nav__dropdown:focus-within .nav__menu { display: flex; }
+}
+/* Any device: reveal when explicitly expanded (mobile accordion) */
+.nav__dropdown--open .nav__menu { display: flex; }
+.nav__chev { transition: transform 0.2s ease; }
+.nav__dropdown--open .nav__chev { transform: rotate(180deg); }
 .nav__menu a {
   padding: 9px 12px;
   border-radius: 8px;
@@ -109,7 +116,8 @@
     gap: 2px;
   }
   .nav__links--open { display: flex; }
-  .nav__menu { position: static; display: flex; box-shadow: none; border: none; background: none; padding-left: 16px; }
+  /* Submenu stays collapsed until the Knowledge Hub row is tapped */
+  .nav__menu { position: static; box-shadow: none; border: none; background: none; padding-left: 16px; }
   .nav__burger { display: grid; }
   .nav__ask { display: none; }
 }

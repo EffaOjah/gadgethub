@@ -25,11 +25,15 @@ const HUB_MENU = [
 export default function Navbar() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [hubOpen, setHubOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [theme, setTheme] = useState<Theme>(
     () => (document.documentElement.dataset.theme === 'light' ? 'light' : 'dark'),
   );
   const navigate = useNavigate();
+
+  const isMobileNav = () => window.matchMedia('(max-width: 1020px)').matches;
+  const closeMenus = () => { setMobileOpen(false); setHubOpen(false); };
 
   const toggleTheme = () => {
     const next: Theme = theme === 'dark' ? 'light' : 'dark';
@@ -40,7 +44,7 @@ export default function Navbar() {
   const submitSearch = (e: React.FormEvent) => {
     e.preventDefault();
     setSearchOpen(false);
-    setMobileOpen(false);
+    closeMenus();
     navigate(`/search?q=${encodeURIComponent(query || 'MacBook Air M3')}`);
   };
 
@@ -55,23 +59,33 @@ export default function Navbar() {
               key={l.to}
               to={l.to}
               className={({ isActive }) => `nav__link${isActive ? ' nav__link--active' : ''}`}
-              onClick={() => setMobileOpen(false)}
+              onClick={closeMenus}
             >
               {l.label}
               {l.isNew && <span className="badge badge--new">NEW</span>}
             </NavLink>
           ))}
-          <div className="nav__dropdown">
+          <div className={`nav__dropdown${hubOpen ? ' nav__dropdown--open' : ''}`}>
             <NavLink
               to="/knowledge-hub"
               className={({ isActive }) => `nav__link${isActive ? ' nav__link--active' : ''}`}
-              onClick={() => setMobileOpen(false)}
+              aria-expanded={hubOpen}
+              onClick={(e) => {
+                // On mobile, tapping expands the submenu instead of navigating.
+                // On desktop the submenu opens on hover, so navigate as normal.
+                if (isMobileNav()) {
+                  e.preventDefault();
+                  setHubOpen((v) => !v);
+                } else {
+                  closeMenus();
+                }
+              }}
             >
-              Knowledge Hub <ChevronDown size={13} />
+              Knowledge Hub <ChevronDown size={13} className="nav__chev" />
             </NavLink>
             <div className="nav__menu">
               {HUB_MENU.map((m) => (
-                <Link key={m.label} to={m.to} onClick={() => setMobileOpen(false)}>{m.label}</Link>
+                <Link key={m.label} to={m.to} onClick={closeMenus}>{m.label}</Link>
               ))}
             </div>
           </div>
@@ -100,7 +114,8 @@ export default function Navbar() {
           <button
             className="nav__icon-btn nav__burger"
             aria-label="Toggle menu"
-            onClick={() => setMobileOpen((v) => !v)}
+            aria-expanded={mobileOpen}
+            onClick={() => { setMobileOpen((v) => !v); setHubOpen(false); }}
           >
             {mobileOpen ? <X size={19} /> : <Menu size={19} />}
           </button>
