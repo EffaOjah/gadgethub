@@ -128,7 +128,7 @@ export default function CommunityPage() {
               <h3>Community Pulse</h3>
               <span className="reco-card__live"><span className="ticker__dot" /> Live now</span>
             </div>
-            <div className="grid mt-16" style={{ gridTemplateColumns: 'repeat(4, 1fr)', gap: 10 }}>
+            <div className="grid grid-4 mt-16" style={{ gap: 10 }}>
               {[
                 { icon: MessageCircle, tone: 'blue', v: '1,842', l: 'Active discussions today' },
                 { icon: CheckCircle2, tone: 'green', v: '368', l: 'Questions answered today' },
@@ -175,7 +175,7 @@ export default function CommunityPage() {
 
       {/* ── DISCUSSIONS + SIDEBARS ───────────────────────────── */}
       <section className="section">
-        <div className="container" style={{ display: 'grid', gridTemplateColumns: '210px 1fr 300px', gap: 20, alignItems: 'start' }}>
+        <div className="container dash-3">
           {/* Filters */}
           <aside className="filters-panel">
             <h3>Filters <button>Clear all</button></h3>
@@ -354,7 +354,7 @@ export default function CommunityPage() {
 
       {/* ── AI SUMMARIES + CONTRIBUTORS ──────────────────────── */}
       <section className="section" style={{ paddingTop: 0 }}>
-        <div className="container" style={{ display: 'grid', gridTemplateColumns: '1.3fr 1fr', gap: 20 }}>
+        <div className="container split-2">
           <div className="card">
             <div className="flex items-center justify-between mb-12">
               <h3 className="small bold">GadgetHub AI Community Summaries</h3>
@@ -383,7 +383,7 @@ export default function CommunityPage() {
               <h3 className="small bold">Top Contributors</h3>
               <span className="view-all tiny">View all contributors</span>
             </div>
-            <div className="grid" style={{ gridTemplateColumns: 'repeat(5, 1fr)', gap: 10 }}>
+            <div className="grid grid-5" style={{ gap: 10 }}>
               {contributors.map((c) => (
                 <div className="contributor-card" key={c.id}>
                   <Avatar name={c.name} size="lg" />

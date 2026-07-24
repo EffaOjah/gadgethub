@@ -607,6 +607,36 @@
 :root[data-theme='light'] .store-badge { background: #0b1226; border-color: #0b1226; color: #fff; }
 :root[data-theme='light'] .store-badge small { color: rgba(255, 255, 255, 0.65); }
 
+/* ── Responsive layout helpers (replace non-responsive inline grids) ── */
+/* 3-panel dashboard: filters | list | insights */
+.dash-3 { display: grid; grid-template-columns: 210px 1fr 300px; gap: 20px; align-items: start; }
+@media (max-width: 1080px) { .dash-3 { grid-template-columns: 1fr; } }
+
+/* asymmetric two-column split */
+.split-2 { display: grid; grid-template-columns: 1.3fr 1fr; gap: 20px; align-items: start; }
+@media (max-width: 900px) { .split-2 { grid-template-columns: 1fr; } }
+
+/* five-across card rows */
+.grid-5 { grid-template-columns: repeat(5, 1fr); }
+@media (max-width: 1080px) { .grid-5 { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 640px) { .grid-5 { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 440px) { .grid-5 { grid-template-columns: 1fr; } }
+
+/* On phones the sticky sidebars must not stay pinned once stacked */
+@media (max-width: 1080px) {
+  .side-stack, .filters-panel { position: static; }
+}
+
+/* Long unbreakable strings (URLs, model numbers) must wrap, not overflow */
+.discussion-row h3, .news-row h3, .guide-card h3,
+.review-card__title, .review-card__body { overflow-wrap: anywhere; }
+
+/* On very narrow phones, let long pill labels wrap instead of clipping */
+@media (max-width: 400px) {
+  .chip { white-space: normal; text-align: left; }
+  .container { padding: 0 14px; }
+}
+
 /* ── Live ticker rotation (theme-neutral) ───────────────────── */
 .ticker__items--animate { animation: ticker-in 0.45s ease; }
 @keyframes ticker-in {

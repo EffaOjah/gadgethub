@@ -252,7 +252,7 @@ export default function CategoryPage() {
               </div>
             </div>
 
-            <div className="grid grid-4" style={{ gridTemplateColumns: 'repeat(4, 1fr)' }}>
+            <div className="grid grid-4">
               {items.slice(0, 8).map((p) => (
                 <ProductCard key={p.id} product={p} variant="grid" />
               ))}

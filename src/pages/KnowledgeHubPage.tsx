@@ -205,7 +205,7 @@ export default function KnowledgeHubPage() {
 
       {/* ── AI GUIDE SUMMARY + FEATURED ──────────────────────── */}
       <section className="section" style={{ paddingTop: 0 }} id="scam-protection">
-        <div className="container" style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: 20 }}>
+        <div className="container split-2">
           <div className="ai-panel">
             <div className="flex items-center gap-8">
               <h3>GadgetHub AI Guide Summary</h3>
@@ -305,7 +305,7 @@ export default function KnowledgeHubPage() {
               </div>
               <button className="btn btn--outline btn--sm" style={{ marginLeft: 'auto' }}>Explore Scam Protection Guides</button>
             </div>
-            <div className="grid" style={{ gridTemplateColumns: 'repeat(5, 1fr)', gap: 12 }}>
+            <div className="grid grid-5" style={{ gap: 12 }}>
               {SCAM_TILES.map((t) => (
                 <div className="card card--flat center" key={t.title} style={{ padding: 14 }}>
                   <IconTile tone="amber" size={40} style={{ margin: '0 auto' }}><t.icon size={18} /></IconTile>

@@ -209,7 +209,7 @@ export default function ReviewsPage() {
 
       {/* ── FILTERS + REVIEWS + INSIGHTS ─────────────────────── */}
       <section className="section">
-        <div className="container" style={{ display: 'grid', gridTemplateColumns: '210px 1fr 300px', gap: 20, alignItems: 'start' }}>
+        <div className="container dash-3">
           {/* Filters */}
           <aside className="filters-panel">
             <h3>Filters <button>Clear all</button></h3>
@@ -440,7 +440,7 @@ export default function ReviewsPage() {
               <h3 className="small bold">Common Complaints</h3>
               <span className="view-all tiny">Track before you buy</span>
             </div>
-            <div className="grid grid-4" style={{ gap: 8, gridTemplateColumns: 'repeat(4, 1fr)' }}>
+            <div className="grid grid-4" style={{ gap: 8 }}>
               {(['dark', 'silver', 'blue', 'purple', 'gold', 'red', 'green', 'dark'] as const).map((tone, i) => (
                 <div key={i} style={{ position: 'relative', borderRadius: 8, overflow: 'hidden' }}>
                   <DeviceArt kind={(['phone', 'earbuds', 'laptop', 'watch'] as const)[i % 4]} tone={tone} />

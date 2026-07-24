@@ -120,7 +120,7 @@ export default function AiAdvisorPage() {
           GadgetHub AI gives buying guidance, not guarantees. Always confirm condition, warranty and
           seller verification before payment. <Link to="/how-it-works" className="blue">How it works →</Link>
         </p>
-        <div className="flex gap-10 mt-12" style={{ justifyContent: 'center' }}>
+        <div className="flex wrap gap-10 mt-12" style={{ justifyContent: 'center' }}>
           <Link to="/compare" className="btn btn--outline btn--sm">Compare Gadgets</Link>
           <Link to="/sellers" className="btn btn--outline btn--sm">Find Trusted Sellers</Link>
           <Link to="/reviews" className="btn btn--outline btn--sm">Read Owner Reviews</Link>
